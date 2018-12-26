@@ -20,12 +20,11 @@ import android.content.ContextWrapper;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.fun.ex.app.htmltext.interfase.HtmlInterface;
 import com.fun.ex.app.htmltext.interfase.IHtmlTagHandle;
 import com.fun.ex.app.htmltext.score.HHtml;
-
-import java.io.File;
 
 /**
  * 作者: Created by AdminFun
@@ -96,17 +95,9 @@ public class HtmlTextView extends AppCompatTextView {
         this.setText(HHtml.fromHtml(html, mTextGetter, mTagHandle));
     }
 
-    /**
-     * 图片下载成功的刷新方法
-     */
-    public void invalidate(File file) {
-        if (mTextGetter == null) {
-            return;
-        }
-        if (file == null) {
-            return;
-        }
-        if (file.exists()) {
+    public void refreshHtml() {
+        Log.d("common", "HtmlTextView刷新");
+        if (mTextGetter != null) {
             this.setText(HHtml.fromHtml(currentHtml, mTextGetter, mTagHandle));
         }
     }
@@ -137,11 +128,16 @@ public class HtmlTextView extends AppCompatTextView {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        Log.d("common", "===========onAttachedToWindow");
+        if (mTextGetter != null) {
+            mTextGetter.handleDownload();
+        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        Log.d("common", "+++++++++++onAttachedToWindow");
         if (mTextGetter != null) {
             mTextGetter.onDestroy();
         }

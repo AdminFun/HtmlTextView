@@ -16,19 +16,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.fun.ex.app.htmltext.entity.ImageInfo;
 import com.fun.ex.app.htmltext.interfase.HtmlInterface;
 import com.fun.ex.app.htmltext.interfase.IHtmlImageGetter;
 import com.fun.ex.app.htmltext.score.HtmlDrawable;
-import com.fun.ex.app.htmltext.util.MD5;
+import com.fun.ex.app.htmltext.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 /**
  * 作者: Created by AdminFun
@@ -51,12 +52,17 @@ public class HtmlGetter implements IHtmlImageGetter {
     private final String http = "http://";
     private final String https = "https://";
 
+    // 本地缓存路径，可自定义
+    private String savePath;
+
     private Activity mContext;
     private int mDefaultDrawable;
     private Bitmap mBitmap = null;
     private HtmlDrawable mDrawable = null;
     private AssetManager mAssetManager;
     private HtmlInterface htmlInterface;
+    // 需要下载的图片集合
+    private HashMap<String, ImageInfo> imageInfoMap;
 
     public HtmlGetter(Activity context) {
         this.mContext = context;
@@ -68,6 +74,15 @@ public class HtmlGetter implements IHtmlImageGetter {
 
     public void setDefaultDrawable(int mDefaultDrawable) {
         this.mDefaultDrawable = mDefaultDrawable;
+    }
+
+    /**
+     * 设置本地缓存路径
+     *
+     * @param absolutePath 文件夹路径，不需要文件名
+     */
+    public void setSavePath(String absolutePath) {
+        this.savePath = absolutePath;
     }
 
     @Override
@@ -171,16 +186,36 @@ public class HtmlGetter implements IHtmlImageGetter {
      * 获取网络资源图片
      */
     private Bitmap loadImageFromHttp(Context context, String imageUrl) {
-        String imageName = MD5.MD5(imageUrl) + ".png";
-        Log.d("common", "网络资源：" + imageName);
-        File file = new File(Environment.getExternalStorageDirectory(), imageName);
-        if (file.exists()) {
-            return BitmapFactory.decodeFile(file.getPath());
+        File saveFile = FileUtil.createImagePath(imageUrl, savePath);
+        if (saveFile.exists()) {
+            return BitmapFactory.decodeFile(saveFile.getPath());
         } else {
+            Log.d("common", "没有找到：" + saveFile.getPath());
+            addImageInfo(new ImageInfo().setContext(context).setUrl(imageUrl).setPath(saveFile.getPath()));
+
             if (htmlInterface != null) {
-                htmlInterface.downLoadImage(context, imageUrl, file.getAbsolutePath());
+                // htmlInterface.downLoadImage(context, imageUrl, saveFile.getPath());
             }
             return null;
+        }
+    }
+
+    /**
+     * 触发下载：这种写法的好处是一个HtmlTextView只需要刷新一次
+     */
+    public void handleDownload() {
+        if (htmlInterface != null) {
+            htmlInterface.downLoadImage(mContext, imageInfoMap);
+        }
+    }
+
+    private void addImageInfo(ImageInfo info) {
+        if (imageInfoMap == null) {
+            imageInfoMap = new HashMap<>();
+        }
+        if (!imageInfoMap.containsKey(info.getUrl())) {
+            // 防止重复下载
+            imageInfoMap.put(info.getUrl(), info);
         }
     }
 

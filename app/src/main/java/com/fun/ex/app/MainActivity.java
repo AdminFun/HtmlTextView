@@ -4,14 +4,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
-import com.fun.ex.app.utils.NetImageUtil;
 import com.fun.ex.app.htmltext.HtmlTextView;
+import com.fun.ex.app.htmltext.entity.ImageInfo;
 import com.fun.ex.app.htmltext.interfase.HtmlInterface;
+import com.fun.ex.app.utils.NetImageUtil;
 
 import java.io.File;
+import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity implements HtmlInterface, NetImageUtil.OnImageDownloadListener  {
+public class MainActivity extends AppCompatActivity implements HtmlInterface, NetImageUtil.OnImageDownloadListener {
 
     HtmlTextView htmlTextView;
     String str = "<font color='blue'>测试HTML标签：</font>" +
@@ -31,16 +34,33 @@ public class MainActivity extends AppCompatActivity implements HtmlInterface, Ne
         this.htmlTextView.setHtmlInterface(this)             // 设置下载回调
                 .setDefaultDrawable(R.drawable.mine_order_s1)// 设置默认图
                 .setHtml(str);                               // 设置要展示的HTML字符串
+
+//        File file = Environment.getExternalStorageDirectory();
+//        String path = file.getPath();
+//        Log.d("common", "=======:" + path);
     }
 
+
+    int currentCount = 0;
+    int totalCount = 0;
+
     @Override
-    public void downLoadImage(Context context, String imgUrl, String imgPath) {
+    public void downLoadImage(Context context, HashMap<String, ImageInfo> imageInfos) {
         // TODO 下载监听：这里使用下载工具下载图片，下载完成后回调 invalidate 方法即可
-        NetImageUtil netImageUtil = new NetImageUtil();
-        netImageUtil.setImagePath(imgPath);
-        netImageUtil.setHttpUrl(imgUrl);
-        netImageUtil.setDownloadListener(this);
-        netImageUtil.execute();
+        if (imageInfos == null || imageInfos.isEmpty()) {
+            return;
+        }
+        currentCount = 0;
+        totalCount = imageInfos.size();
+        for (String key : imageInfos.keySet()) {
+            ImageInfo imageInfo = imageInfos.get(key);
+            NetImageUtil netImageUtil = new NetImageUtil();
+            netImageUtil.setImagePath(imageInfo.getPath());
+            netImageUtil.setHttpUrl(imageInfo.getUrl());
+            netImageUtil.setDownloadListener(this);
+            Log.d("common", "启动一次下载：" + imageInfo.getUrl());
+            netImageUtil.execute();
+        }
     }
 
     @Override
@@ -50,12 +70,16 @@ public class MainActivity extends AppCompatActivity implements HtmlInterface, Ne
 
     @Override
     public void onComplete(final File file) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                htmlTextView.invalidate(file);
-            }
-        });
+        currentCount += 1;
+        Log.d("common", "成功下载：" + file.getPath());
+        if (currentCount >= totalCount) {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    htmlTextView.refreshHtml();
+                }
+            });
+        }
     }
 
     @Override

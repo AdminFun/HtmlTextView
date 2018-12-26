@@ -1,6 +1,8 @@
 package com.fun.ex.app.htmltext.interfase;
 
 import android.content.Context;
+import com.fun.ex.app.htmltext.entity.ImageInfo;
+import java.util.HashMap;
 
 /**
  * 作者: Created by AdminFun
@@ -16,5 +18,5 @@ public interface HtmlInterface {
      * 下载图片
      * 下载完成后请调用 invalidate(File) 方法刷新UI
      */
-    void downLoadImage(Context context, String imgUrl, String imgPath);
+    void downLoadImage(Context context, HashMap<String, ImageInfo> imageInfos);
 }
