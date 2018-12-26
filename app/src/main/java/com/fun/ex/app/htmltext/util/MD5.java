@@ -11,7 +11,6 @@ import java.security.NoSuchAlgorithmException;
  * 创建: 2018/12/25
  * 修改: 2018/12/25
  * 版本: v1.0.0
- * 描述:
  */
 public class MD5 {
 

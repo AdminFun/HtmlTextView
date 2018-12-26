@@ -115,6 +115,7 @@ public class HtmlTextView extends AppCompatTextView {
      * 自定义HTML标签
      */
     public void setTagHandle(IHtmlTagHandle mTagHandle) {
+        // TODO 外部可以实现IHtmlTagHandle接口，添加标签的识别类型
         this.mTagHandle = mTagHandle;
     }
 

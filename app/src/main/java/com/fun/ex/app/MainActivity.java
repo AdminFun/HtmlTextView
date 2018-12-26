@@ -28,13 +28,14 @@ public class MainActivity extends AppCompatActivity implements HtmlInterface, Ne
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_res_activity_main_layout);
         this.htmlTextView = this.findViewById(R.id.activity3_text1);
-        this.htmlTextView.setHtmlInterface(this)
-                .setDefaultDrawable(R.drawable.mine_order_s1)
-                .setHtml(str);
+        this.htmlTextView.setHtmlInterface(this)             // 设置下载回调
+                .setDefaultDrawable(R.drawable.mine_order_s1)// 设置默认图
+                .setHtml(str);                               // 设置要展示的HTML字符串
     }
 
     @Override
     public void downLoadImage(Context context, String imgUrl, String imgName) {
+        // TODO 下载监听：这里使用下载工具下载图片，下载完成后回调 invalidate 方法即可
         NetImageUtil netImageUtil = new NetImageUtil();
         netImageUtil.setImageName(imgName);
         netImageUtil.setHttpUrl(imgUrl);
