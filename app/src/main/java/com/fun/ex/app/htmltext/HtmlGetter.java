@@ -82,6 +82,7 @@ public class HtmlGetter implements IHtmlImageGetter {
 
     @Override
     public Drawable getDrawable(String source) {
+        Log.d("common", "HTML遇到img标签：" + source);
         if (TextUtils.isEmpty(source)) {
             return null;
         }
@@ -177,7 +178,7 @@ public class HtmlGetter implements IHtmlImageGetter {
             return BitmapFactory.decodeFile(file.getPath());
         } else {
             if (htmlInterface != null) {
-                htmlInterface.downLoadImage(context, imageUrl, imageName);
+                htmlInterface.downLoadImage(context, imageUrl, file.getAbsolutePath());
             }
             return null;
         }

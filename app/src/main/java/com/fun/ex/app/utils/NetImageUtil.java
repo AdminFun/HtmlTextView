@@ -1,7 +1,6 @@
 package com.fun.ex.app.utils;
 
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import java.io.File;
@@ -21,7 +20,7 @@ import java.net.URL;
 public class NetImageUtil extends AsyncTask<String, Integer, File> {
 
     private String httpUrl;
-    private String imageName;
+    private String imagePath;
     private File localFile;
     private String failMsg = "";
     private OnImageDownloadListener downloadListener;
@@ -30,8 +29,8 @@ public class NetImageUtil extends AsyncTask<String, Integer, File> {
         this.httpUrl = httpUrl;
     }
 
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
+    public void setImagePath(String path) {
+        this.imagePath = path;
     }
 
     public void setDownloadListener(OnImageDownloadListener downloadListener) {
@@ -41,11 +40,10 @@ public class NetImageUtil extends AsyncTask<String, Integer, File> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (!TextUtils.isEmpty(imageName)) {
-            this.localFile = new File(Environment.getExternalStorageDirectory(), imageName);
+        if (!TextUtils.isEmpty(imagePath)) {
+            this.localFile = new File(imagePath);
         }
         if (downloadListener != null) {
-            // TODO 该方法运行在主线程，一般用于显示进度条之类的操作
             downloadListener.onPreExecute();
         }
     }

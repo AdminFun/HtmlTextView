@@ -16,5 +16,5 @@ public interface HtmlInterface {
      * 下载图片
      * 下载完成后请调用 invalidate(File) 方法刷新UI
      */
-    void downLoadImage(Context context, String imgUrl, String imgName);
+    void downLoadImage(Context context, String imgUrl, String imgPath);
 }

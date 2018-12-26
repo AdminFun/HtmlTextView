@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity implements HtmlInterface, Ne
 
     HtmlTextView htmlTextView;
     String str = "<font color='blue'>测试HTML标签：</font>" +
-            "<br>1、显示网络图片1：<img src = \"http://static.dev.epetbar.com/static_www/goods_detail_dev/toBrand.png\" />" +
+            "<br>1、显示网络图片1 <img src = \"http://static.dev.epetbar.com/static_www/goods_detail_dev/toBrand.png\" />" +
             "<br>2、网络图片2：<img src=\"http://img2.epetbar.com/brand/brandLogo/purchase_suppliers_file_1537174351.png\" />" +
             "<br>3、网络图片3：<img src=\"http://img2.epetbar.com/nowater/brand_logo/2018-03/07/15/6360b2e4d7a84a5b760db9f4545a813a.jpg\">" +
             "<br>4、网络图片4：<img src=\"http://img2.epetbar.com/brand/brandLogo/upload_file_1542336567.jpg\">" +
@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity implements HtmlInterface, Ne
     }
 
     @Override
-    public void downLoadImage(Context context, String imgUrl, String imgName) {
+    public void downLoadImage(Context context, String imgUrl, String imgPath) {
         // TODO 下载监听：这里使用下载工具下载图片，下载完成后回调 invalidate 方法即可
         NetImageUtil netImageUtil = new NetImageUtil();
-        netImageUtil.setImageName(imgName);
+        netImageUtil.setImagePath(imgPath);
         netImageUtil.setHttpUrl(imgUrl);
         netImageUtil.setDownloadListener(this);
         netImageUtil.execute();
