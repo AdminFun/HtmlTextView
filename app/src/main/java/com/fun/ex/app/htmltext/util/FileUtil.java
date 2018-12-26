@@ -4,7 +4,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
 
@@ -30,7 +29,17 @@ public class FileUtil {
             if (!savePath.endsWith("/")) {
                 savePath += "/";
             }
-            saveFile = new File(savePath + imageName);
+
+            final File temp = new File(savePath);
+            if (!temp.exists()) {
+                if (!temp.mkdir()) {
+                    saveFile = new File(Environment.getExternalStorageDirectory(), imageName);
+                } else {
+                    saveFile = new File(savePath + imageName);
+                }
+            } else {
+                saveFile = new File(savePath + imageName);
+            }
         }
         return saveFile;
     }

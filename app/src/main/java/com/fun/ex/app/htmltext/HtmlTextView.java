@@ -17,6 +17,7 @@ package com.fun.ex.app.htmltext;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
@@ -90,6 +91,8 @@ public class HtmlTextView extends AppCompatTextView {
         this.setDefaultDrawable(defaultDrawable);
         this.setHtmlInterface(htmlInterface);
         this.mTextGetter = new HtmlGetter(mActivity);
+        String path = Environment.getExternalStorageDirectory().getPath()+"/ddg/";
+        this.mTextGetter.setSavePath(path);
         this.mTextGetter.setHtmlInterface(mHtmlInterface);
         this.mTextGetter.setDefaultDrawable(mDrawable);
         this.setText(HHtml.fromHtml(html, mTextGetter, mTagHandle));
