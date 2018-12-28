@@ -18,11 +18,6 @@ public class ImageInfo {
     private String mUrl;
     private Context mContext;
 
-    /**
-     * 是否已经下载成功
-     */
-    private boolean isDownload = false;
-
     @Override
     public String toString() {
         return String.format("{path:%s,url:%s", getPath(), getUrl());
@@ -43,16 +38,7 @@ public class ImageInfo {
     public ImageInfo setPath(String path) {
         this.mPath = path;
         File file = new File(mPath);
-        this.isDownload = file.exists();
         return this;
-    }
-
-    public boolean isDownload() {
-        return isDownload;
-    }
-
-    public void setDownload(boolean download) {
-        isDownload = download;
     }
 
     public String getUrl() {

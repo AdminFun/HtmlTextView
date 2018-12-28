@@ -65,7 +65,6 @@ public class HtmlAdapter extends RecyclerView.Adapter<HtmlAdapter.HtmlViewHolder
         if (imageInfos == null || imageInfos.isEmpty()) {
             return;
         }
-        DownLoadHelper loadHelper = new DownLoadHelper(this);
-        loadHelper.start(imageInfos);
+        new DownLoadHelper(this).start(imageInfos);
     }
 }
