@@ -37,5 +37,5 @@ implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 ```
 **下载回调**
 ```
-htmlTextView.invalidate(file);
+htmlTextView.refreshHtml();
 ```

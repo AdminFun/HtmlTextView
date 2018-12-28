@@ -2,8 +2,6 @@ package com.fun.ex.app.htmltext.entity;
 
 import android.content.Context;
 
-import java.io.File;
-
 /**
  * 作者: Created by AdminFun
  * 邮箱: 614484070@qq.com
@@ -37,7 +35,6 @@ public class ImageInfo {
 
     public ImageInfo setPath(String path) {
         this.mPath = path;
-        File file = new File(mPath);
         return this;
     }
 
