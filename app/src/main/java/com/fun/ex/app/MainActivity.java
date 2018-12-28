@@ -1,10 +1,12 @@
 package com.fun.ex.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.fun.ex.app.htmltext.HtmlTextView;
 import com.fun.ex.app.htmltext.entity.ImageInfo;
@@ -29,17 +31,20 @@ public class MainActivity extends AppCompatActivity implements HtmlInterface, Ne
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.app_res_activity_main_layout);
+        setContentView(R.layout.activity_main_layout);
         this.htmlTextView = this.findViewById(R.id.activity3_text1);
-        this.htmlTextView.setHtmlInterface(this)             // 设置下载回调
-                .setDefaultDrawable(R.drawable.mine_order_s1)// 设置默认图
-                .setHtml(str);                               // 设置要展示的HTML字符串
+//        this.htmlTextView.setHtmlInterface(this)             // 设置下载回调
+//                .setDefaultDrawable(R.drawable.mine_order_s1)// 设置默认图
+//                .setHtml(str);                               // 设置要展示的HTML字符串
 
 //        File file = Environment.getExternalStorageDirectory();
 //        String path = file.getPath();
 //        Log.d("common", "=======:" + path);
     }
 
+    public void testList(View view) {
+        startActivity(new Intent(this, ListActivity.class));
+    }
 
     int currentCount = 0;
     int totalCount = 0;

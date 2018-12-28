@@ -52,20 +52,25 @@ public class HtmlGetter implements IHtmlImageGetter {
     private final String http = "http://";
     private final String https = "https://";
 
-    // 本地缓存路径，可自定义
-    private String savePath;
-
     private Activity mContext;
+    private String mSavePath;
     private int mDefaultDrawable;
+    // 需要下载的图片集合
+    private HashMap<String, ImageInfo> imageInfoMap;
     private Bitmap mBitmap = null;
     private HtmlDrawable mDrawable = null;
     private AssetManager mAssetManager;
     private HtmlInterface htmlInterface;
-    // 需要下载的图片集合
-    private HashMap<String, ImageInfo> imageInfoMap;
+
+    /**
+     * 是否已经被触发下载图片
+     * 每个Getter只允许被触发一次下载，避免重复触发
+     */
+    private boolean isDownload = false;
 
     public HtmlGetter(Activity context) {
         this.mContext = context;
+        this.isDownload = false;
     }
 
     public void setHtmlInterface(HtmlInterface htmlInterface) {
@@ -76,13 +81,12 @@ public class HtmlGetter implements IHtmlImageGetter {
         this.mDefaultDrawable = mDefaultDrawable;
     }
 
-    /**
-     * 设置本地缓存路径
-     *
-     * @param absolutePath 文件夹路径，不需要文件名
-     */
     public void setSavePath(String absolutePath) {
-        this.savePath = absolutePath;
+        this.mSavePath = absolutePath;
+    }
+
+    public void setDownload(boolean download) {
+        this.isDownload = download;
     }
 
     @Override
@@ -93,6 +97,18 @@ public class HtmlGetter implements IHtmlImageGetter {
     @Override
     public int getDefaultDrawable() {
         return mDefaultDrawable;
+    }
+
+    /**
+     * 触发下载：这种写法的好处是一个HtmlTextView只需要刷新一次
+     */
+    public void handleDownload() {
+        if (htmlInterface != null) {
+            if (!isDownload) {
+                isDownload = true;
+                htmlInterface.downLoadImage(mContext, imageInfoMap);
+            }
+        }
     }
 
     @Override
@@ -186,26 +202,13 @@ public class HtmlGetter implements IHtmlImageGetter {
      * 获取网络资源图片
      */
     private Bitmap loadImageFromHttp(Context context, String imageUrl) {
-        File saveFile = FileUtil.createImagePath(imageUrl, savePath);
+        File saveFile = FileUtil.createImagePath(imageUrl, mSavePath);
         if (saveFile.exists()) {
+            this.removeImageInfo(imageUrl);
             return BitmapFactory.decodeFile(saveFile.getPath());
         } else {
-            Log.d("common", "没有找到：" + saveFile.getPath());
             addImageInfo(new ImageInfo().setContext(context).setUrl(imageUrl).setPath(saveFile.getPath()));
-
-            if (htmlInterface != null) {
-                // htmlInterface.downLoadImage(context, imageUrl, saveFile.getPath());
-            }
             return null;
-        }
-    }
-
-    /**
-     * 触发下载：这种写法的好处是一个HtmlTextView只需要刷新一次
-     */
-    public void handleDownload() {
-        if (htmlInterface != null) {
-            htmlInterface.downLoadImage(mContext, imageInfoMap);
         }
     }
 
@@ -214,8 +217,13 @@ public class HtmlGetter implements IHtmlImageGetter {
             imageInfoMap = new HashMap<>();
         }
         if (!imageInfoMap.containsKey(info.getUrl())) {
-            // 防止重复下载
-            imageInfoMap.put(info.getUrl(), info);
+            this.imageInfoMap.put(info.getUrl(), info);
+        }
+    }
+
+    private void removeImageInfo(String key) {
+        if (imageInfoMap != null) {
+            this.imageInfoMap.remove(key);
         }
     }
 
@@ -233,6 +241,10 @@ public class HtmlGetter implements IHtmlImageGetter {
                 mBitmap.recycle();
             }
             mBitmap = null;
+        }
+        if (imageInfoMap != null) {
+            imageInfoMap.clear();
+            imageInfoMap = null;
         }
     }
 }

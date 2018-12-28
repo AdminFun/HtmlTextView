@@ -2,6 +2,8 @@ package com.fun.ex.app.htmltext.entity;
 
 import android.content.Context;
 
+import java.io.File;
+
 /**
  * 作者: Created by AdminFun
  * 邮箱: 614484070@qq.com
@@ -15,6 +17,11 @@ public class ImageInfo {
     private String mPath;
     private String mUrl;
     private Context mContext;
+
+    /**
+     * 是否已经下载成功
+     */
+    private boolean isDownload = false;
 
     @Override
     public String toString() {
@@ -35,7 +42,17 @@ public class ImageInfo {
 
     public ImageInfo setPath(String path) {
         this.mPath = path;
+        File file = new File(mPath);
+        this.isDownload = file.exists();
         return this;
+    }
+
+    public boolean isDownload() {
+        return isDownload;
+    }
+
+    public void setDownload(boolean download) {
+        isDownload = download;
     }
 
     public String getUrl() {

@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+
 import java.io.InputStream;
 
 /**
@@ -57,7 +58,9 @@ public class HtmlDrawable extends BitmapDrawable {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         if (mBitmap != null) {
-            canvas.drawBitmap(mBitmap, 0, 0, getPaint());
+            if (!mBitmap.isRecycled()) {
+                canvas.drawBitmap(mBitmap, 0, 0, getPaint());
+            }
         }
     }
 

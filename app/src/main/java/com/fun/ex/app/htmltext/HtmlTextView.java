@@ -20,6 +20,7 @@ import android.content.ContextWrapper;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -43,6 +44,7 @@ public class HtmlTextView extends AppCompatTextView {
     private HtmlInterface mHtmlInterface;
     private int mDrawable = 0;
     private String currentHtml;
+    private String mSavePath;
 
     public HtmlTextView(Context context) {
         super(context);
@@ -80,6 +82,22 @@ public class HtmlTextView extends AppCompatTextView {
     }
 
     /**
+     * 设置本地缓存路径
+     */
+    public HtmlTextView setSavePath(String mSavePath) {
+        this.mSavePath = mSavePath;
+        return this;
+    }
+
+    /**
+     * 自定义HTML标签
+     */
+    public void setTagHandle(IHtmlTagHandle mTagHandle) {
+        // TODO 外部可以实现IHtmlTagHandle接口，添加标签的识别类型
+        this.mTagHandle = mTagHandle;
+    }
+
+    /**
      * 要显示的、包含HTML标签的字符串
      */
     public void setHtml(String html) {
@@ -91,8 +109,7 @@ public class HtmlTextView extends AppCompatTextView {
         this.setDefaultDrawable(defaultDrawable);
         this.setHtmlInterface(htmlInterface);
         this.mTextGetter = new HtmlGetter(mActivity);
-        String path = Environment.getExternalStorageDirectory().getPath()+"/ddg/";
-        this.mTextGetter.setSavePath(path);
+        this.mTextGetter.setSavePath(getSavePath());
         this.mTextGetter.setHtmlInterface(mHtmlInterface);
         this.mTextGetter.setDefaultDrawable(mDrawable);
         this.setText(HHtml.fromHtml(html, mTextGetter, mTagHandle));
@@ -103,14 +120,6 @@ public class HtmlTextView extends AppCompatTextView {
         if (mTextGetter != null) {
             this.setText(HHtml.fromHtml(currentHtml, mTextGetter, mTagHandle));
         }
-    }
-
-    /**
-     * 自定义HTML标签
-     */
-    public void setTagHandle(IHtmlTagHandle mTagHandle) {
-        // TODO 外部可以实现IHtmlTagHandle接口，添加标签的识别类型
-        this.mTagHandle = mTagHandle;
     }
 
     /**
@@ -128,10 +137,16 @@ public class HtmlTextView extends AppCompatTextView {
         return null;
     }
 
+    private String getSavePath() {
+        if (TextUtils.isEmpty(mSavePath)) {
+            return Environment.getExternalStorageDirectory().getPath() + "/htmlCacheImage/";
+        }
+        return mSavePath;
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        Log.d("common", "===========onAttachedToWindow");
         if (mTextGetter != null) {
             mTextGetter.handleDownload();
         }
@@ -140,7 +155,9 @@ public class HtmlTextView extends AppCompatTextView {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        Log.d("common", "+++++++++++onAttachedToWindow");
+    }
+
+    public void onDestroy() {
         if (mTextGetter != null) {
             mTextGetter.onDestroy();
         }
